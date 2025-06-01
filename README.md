@@ -23,14 +23,13 @@ Lebih lanjut, Putri dan Faisal (2023) membandingkan efektivitas content-based fi
 
 ### 🧩 Problem Statements
 1. Pengguna sering mengalami kesulitan dalam menemukan anime baru yang sesuai dengan preferensi mereka karena banyaknya pilihan yang tersedia.
-2. Tidak ada sistem rekomendasi yang secara otomatis menyarankan anime berdasarkan kemiripan konten seperti genre, sinopsis, studio, dan lainnya.
+2. Tidak ada sistem rekomendasi yang secara otomatis menyarankan anime berdasarkan kemiripan konten yang lebih komprehensif, seperti gabungan dari sinopsis, genre, musim tayang, produser, status penayangan, studio produksi, jenis anime, jumlah episode, skor, demografi, dan rating.
 3. Informasi deskriptif seperti sinopsis, genre, dan status tayang belum dimanfaatkan secara optimal untuk membantu pengguna dalam pencarian anime yang relevan.
 
 ### 🎯 Goals
-1. Membangun sistem rekomendasi berbasis konten (content-based filtering) yang dapat memberikan saran anime serupa berdasarkan atribut kontennya.
-2. Menyediakan rekomendasi anime yang paling mirip berdasarkan anime yang dipilih oleh pengguna.
-3. Menggunakan teknik NLP seperti TF-IDF dan cosine similarity untuk mengekstraksi dan menghitung kemiripan antar anime secara efisien.
-
+1. Membangun sistem rekomendasi berbasis content-based filtering yang dapat menyarankan anime baru yang relevan dengan preferensi pengguna, sehingga membantu mengurangi kesulitan dalam mencari tontonan di tengah banyaknya pilihan yang tersedia.
+2. Mengembangkan sistem rekomendasi yang mampu memberikan saran anime hanya berdasarkan informasi konten (seperti sinopsis, genre, studio, status, musim tayang, dan lainnya), tanpa memerlukan riwayat aktivitas atau interaksi pengguna, agar tetap efektif digunakan oleh pengguna baru.
+3. Memanfaatkan teknik Natural Language Processing (NLP) seperti TF-IDF untuk mengekstraksi fitur teks dari atribut-atribut konten, dan menghitung tingkat kemiripan antar anime menggunakan cosine similarity guna menghasilkan rekomendasi yang akurat dan relevan.
 
 ## Data Understanding
 
@@ -68,98 +67,110 @@ Variabel-variabel utama yang terdapat dalam dataset Anime.csv adalah sebagai ber
 - **Favorites**: Jumlah pengguna yang memfavoritkan.
 
 
-![image]()
+![image](img/Info.png)
 
-DataFrame yang ditampilkan memiliki 19.311 entri dengan indeks dari 8 hingga 19.318 dan terdiri dari 11 kolom, yaitu id, title, synopsis, genre, aired, episodes, members, popularity, ranked, score, img_url, dan link. Semua kolom memiliki data non-null sebanyak 19.311, kecuali synopsis (18.336), episodes (18.605), ranked (16.099), dan score (18.732). yang menunjukkan adanya missing values yakni: 
-- uid : 0
-- title : 0
-- synopsis : 975
-- genre : 0
-- aired : 0
-- episodes : 706
-- members : 0
-- popularity : 0
-- ranked : 3.212
-- score : 0
-- img_url : 0
-- link : 579
+Dataset ini terdiri dari 21.460 entri dan 28 kolom dengan berbagai tipe data. Sebagian besar kolom bertipe object, seperti Title, Type, dan Genres, yang menunjukkan data teks atau kategorikal. Beberapa kolom seperti Score, Ranked, dan Favorites bertipe numerik (float64 atau int64). Kolom Duration_Minutes memiliki jumlah data yang lebih sedikit, menandakan adanya nilai yang hilang. Secara keseluruhan, dataset ini cukup besar dan cocok digunakan untuk analisis atau pemodelan terkait anime.
 
-Tipe data terdiri dari float64 (3 kolom: episodes, ranked, score), int64 (3 kolom: id, members, popularity), dan object (6 kolom: title, synopsis, genre, aired, img_url, link).
 
-![image](https://github.com/user-attachments/assets/3e569f30-4e26-4aec-bd76-dc5979c678e1)
-![image](https://github.com/user-attachments/assets/7a338e0e-0714-4918-9bef-641569fdbf13)
+![image](img/Statistik_Deskriptif.png))
 
-Grafik di atas adalah visualisasi dari "Top 10 Genre Anime Terpopuler" yang menunjukkan distribusi jumlah anime berdasarkan genre. Genre "Comedy" menjadi yang terpopuler dengan jumlah anime terbanyak, dengan 6461 judul, diikuti oleh "Action" dengan 4215 judul. Genre "Fantasy" 3466 judul, kemudian "Adventure" memiliki 3143 judul. Sedangkan "Drama" memiliki 3004 judul dan "Sci-Fi" berada di 2832 judul. Genre "Hentai" memiliki 2574 judul, "Kids" 2549 judul, dan "Shounen" memiliki 2322 judul, dengan "Romance" menempati posisi terbawah di daftar ini dengan 2152 judul. Grafik ini menunjukkan bahwa "Comedy" dan "Action" adalah genre yang paling dominan dalam dataset anime tersebut, sementara "Romance" memiliki popularitas yang lebih rendah dibandingkan genre lainnya dalam 10 besar.
+Gambar diatas menunjukkan statistik deskriptif dari beberapa kolom numerik dalam dataset anime. Kolom Score memiliki nilai rata-rata sekitar 6.42 dengan nilai maksimum 9.13 dan minimum 1.84, menunjukkan variasi skor penilaian pengguna terhadap anime. Kolom Episodes memiliki nilai maksimum yang sangat tinggi (3057 episode), sementara median-nya hanya 2 episode, yang menandakan distribusi yang sangat miring ke kanan. Kolom Scored_Users dan Members juga menunjukkan perbedaan besar antara nilai minimum dan maksimum, mencerminkan popularitas yang sangat bervariasi antar anime. Selain itu, kolom Duration_Minutes rata-rata berdurasi sekitar 23.9 menit per episode, dengan sebagian besar berada dalam kisaran 22–26 menit.
 
-![image](https://github.com/user-attachments/assets/63411486-3855-4481-b68d-855504221f93)
+![image](img/Grafik_genre.png)
 
-Output statistik deskriptif dari DataFrame untuk kolom score, ranked, popularity, dan episodes memberikan gambaran distribusi data dalam dataset anime tersebut. Secara keseluruhan, data ini mencerminkan variasi yang signifikan dalam skor, peringkat, popularitas, dan jumlah episode anime dalam dataset.
+Gambar tersebut menampilkan grafik batang horizontal yang menunjukkan sepuluh genre anime terpopuler berdasarkan jumlah anime yang termasuk dalam masing-masing genre. Genre Comedy menempati posisi teratas dengan jumlah anime terbanyak, mendekati angka 7000. Genre Action dan Fantasy juga cukup dominan, masing-masing berada di posisi kedua dan ketiga. Genre Unknown muncul di urutan keempat, kemungkinan mencakup entri yang tidak memiliki label genre yang jelas. Sementara itu, genre seperti Romance, Slice of Life, dan Supernatural memiliki jumlah anime yang relatif lebih sedikit dibandingkan genre lain dalam daftar ini.
 
 ## Data Preparation
 Tahap data preparation dilakukan untuk memastikan bahwa data yang digunakan dalam pelatihan model sudah bersih, valid, dan relevan. Proses ini dimulai dengan pemilihan fitur-fitur yang paling berpengaruh terhadap model sistem rekomendasi CBF, yaitu uid, title, dan genre. Pemilihan ini bertujuan untuk menyederhanakan data dan hanya mempertahankan informasi yang diperlukan dalam proses pemodelan. Setelah itu kolom uid diganti namanya menjadi anime_id untuk memperjelas. Kemudian diterapkan beberapa teknik dalam tahap data preparation yakni:
 
-### 1. Penanganan Missing Values
+### 1. Penghapusan kolom yang tidak digunakan
 
-![image](https://github.com/user-attachments/assets/a78ae297-2f2a-4f88-86ce-4564f35e6075)
+![image](img/Ambil_kolom.png)
 
-Output dari perintah df.isnull().sum() menunjukkan jumlah missing values pada kolom anime_id, title, dan genre dalam DataFrame. Ketiga kolom tersebut, yaitu anime_id, title, dan genre, masing-masing memiliki 0 entri yang bernilai null, yang berarti tidak ada data yang hilang pada kolom-kolom ini.
+Dalam kode tersebut, kolom-kolom seperti title, synonyms, start_aired, ranked, dan lainnya dihapus dari DataFrame menggunakan df.drop Penghapusan ini dilakukan karena kolom-kolom tersebut tidak digunakan pada permodelan kali ini. Dengan menghapus kolom yang tidak dibutuhkan, dataset menjadi lebih bersih, ringkas, dan efisien untuk dianalisis lebih lanjut atau digunakan dalam pelatihan model machine learning.
 
-### 2. Pengurutan Berdasarkan ID
+### 2. Pengecekan Missing Values
 
-Data kemudian diurutkan berdasarkan kolom anime_id untuk memperjelas identitas setiap entri anime. Pengurutan ini dilakukan untuk menjaga konsistensi saat proses evaluasi atau pelacakan hasil rekomendasi nantinya. Data yang telah di urutkan kemudian dimasukkan ke fix_df.
+![image](img/Cek_null.png)
 
-![image](https://github.com/user-attachments/assets/7cdddc88-0bb1-4c2c-b5dc-b0eee53df2ec)
+Dari hasil tersebut terlihat bahwa kolom Episodes, Rating, dan Score memiliki nilai kosong, masing-masing sebanyak 547, 545, dan 6898 entri. Nilai kosong ini dapat menyebabkan masalah saat melakukan analisis statistik atau pelatihan model machine learning, karena banyak algoritma tidak bisa menangani data yang hilang. Oleh karena itu, penting untuk menangani nilai-nilai ini, yang akan dilakukan dilangkah selanjutnya
 
-### 3. Pembersihan dan Penyederhanaan Genre
+### 3. Penanganan Missing Values
 
-Kolom genre awalnya berisi nilai berupa string dari list genre, misalnya "[‘Action’, ‘Comedy’]". Format ini tidak ideal untuk pemrosesan teks. Oleh karena itu, dilakukan parsing menggunakan ast.literal_eval() untuk mengonversi string menjadi list Python. Setelah itu, genre dibersihkan dari karakter yang tidak perlu, dan hanya satu genre utama yang diambil dari setiap entri untuk menyederhanakan proses rekomendasi yakni hanya mengambil genre pertama dari list genre.
+![image](img/Simple_imputer.png)
+![image](img/Isi_modus.png)
 
-![image](https://github.com/user-attachments/assets/e76174c0-5cb5-4147-bd02-e6f7e570838c)
+Untuk pada kolom Episodes dan Score yang sebelumnya memiliki nilai kosong diisi menggunakan strategi median melalui SimpleImputer(strategy='median'). Median dipilih karena lebih tahan terhadap outlier dibanding rata-rata, sehingga lebih cocok untuk data yang mungkin memiliki distribusi tidak normal. ColumnTransformer digunakan agar hanya kolom tertentu yang diimputasi, sementara kolom lainnya tetap dipertahankan (remainder='passthrough'). Hasilnya kemudian dikonversi kembali menjadi DataFrame baru, sehingga data siap digunakan untuk analisis lebih lanjut atau pemodelan machine learning tanpa kehilangan informasi penting.
+
+Kemudian pada kolom Rating menggunakan modus (nilai yang paling sering muncul). Dalam hal ini, digunakan fungsi fillna() yang diisi dengan df['Rating'].mode()[0], yaitu nilai modus pertama dari kolom tersebut. Strategi ini sangat sesuai untuk data kategorikal seperti Rating, karena nilai-nilainya biasanya berupa kategori . Dengan mengisi menggunakan modus, kita menjaga konsistensi tipe data dan tidak memperkenalkan bias numerik seperti jika menggunakan mean atau median. 
 
 ![image](https://github.com/user-attachments/assets/db40865d-8630-44da-b21e-a6ede934f6f4)
 
 Setelah menyederhanakan genre, muncul sejumlah missing values pada kolom tersebut. Missing values ini akan ditindak dengan cara dihapus.
 
-### 4. Penyesuaian Format Genre
+### 4. Transformasi ke List 
 
-Pada langkah ini, dilakukan penggantian karakter spasi pada nilai di kolom genre menjadi garis bawah (_). Langkah ini penting agar genre yang terdiri dari dua kata atau lebih, seperti "Slice of Life" atau "Sci fi", tidak terpotong saat diproses oleh algoritma TF-IDF yang secara default memisahkan kata berdasarkan spasi. Dengan mengubah format menjadi "Slice_of_Life", kita memastikan bahwa genre tersebut diperlakukan sebagai satu entitas utuh, sehingga representasi fitur menjadi lebih akurat dan tidak kehilangan makna genre aslinya.
+![image](img/Ubah_Kolom_Numerik.png)
 
-### 5. Penghapusan Duplikasi
+Pada langkah ini, dilakukan konversi nilai pada beberapa kolom seperti Episodes, Score, dan Rating menjadi tipe data string agar dapat diproses sebagai teks. Selanjutnya, didefinisikan beberapa fungsi seperti c, gen, prod, dan lainnya untuk memisahkan nilai string berdasarkan spasi atau koma menjadi bentuk list. Pemisahan ini bertujuan agar data multikategori yang sebelumnya tergabung dalam satu string (misalnya beberapa genre dalam satu sel) bisa dipecah menjadi elemen-elemen terpisah. Hal ini penting untuk memudahkan proses tokenisasi atau pembuatan fitur berbasis teks, seperti pada metode TF-IDF atau one-hot encoding. Dengan memecah data menjadi format list, representasi data menjadi lebih akurat dan sesuai dengan struktur aslinya.
 
-Data duplikat yang memiliki informasi identik lebih dari satu kali dihapus untuk memastikan bahwa model tidak belajar dari data yang sama secara berulang. Hal ini juga dilakukan agar hasil analisis menjadi lebih valid dan tidak bias.
+### 5. Transformasi Kolom Menjadi Format List
 
-![image](https://github.com/user-attachments/assets/7712ad28-34c2-4790-b385-8229db0aad88)
+![image](img/StringToList.png)
 
-Output dari kode tersebut menunjukkan proses pembersihan data duplikat pada DataFrame fix_df. Pada langkah pertama, perintah fix_df.duplicated().sum() menghasilkan nilai 3.885, yang berarti terdapat 3.885 baris duplikat ditemukan. Data duplikat ini kemudian dihapus dan menyisakan 16141 entri data pada dataset.
+Pada langkah ini, dilakukan transformasi terhadap beberapa kolom seperti Synopsis, Type, Status, Premiered, Studios, Genres, dan lainnya dengan menerapkan fungsi apply() untuk mengubah setiap nilai menjadi list dari kata-kata atau elemen yang dipisah berdasarkan spasi atau koma. Transformasi ini bertujuan untuk mempersiapkan data agar kompatibel dengan teknik pemrosesan teks, seperti TF-IDF atau metode tokenisasi lainnya, yang membutuhkan input berupa list kata-kata. Dengan mengubah string panjang menjadi list kata, setiap elemen bisa diproses sebagai fitur individual oleh model. Hal ini juga memungkinkan pengolahan data multikategori atau data teks panjang secara lebih akurat dan efisien.
 
-### 6. Penyusunan Dataset Ringkas untuk Modelling
+### 6. Pemangkasan Panjang Fitur Teks
+![image](img/Memotong_kolom.png)
 
-Sebelum masuk ke tahap pemodelan, dilakukan penyusunan ulang dataset dengan mengambil hanya kolom-kolom yang relevan, yaitu anime_id, title, dan genre. Masing-masing kolom kemudian dikonversi ke dalam bentuk list untuk memudahkan pembentukan struktur data baru yang lebih sederhana. Selanjutnya, dibuat sebuah DataFrame baru bernama anime_new yang berisi tiga kolom: id, anime_title, dan anime_genre. Dataset ini disiapkan khusus sebagai input utama pada tahap content-based filtering, dengan fokus utama pada kesesuaian antara judul dan genre anime. Langkah ini bertujuan untuk menyederhanakan data dan memfokuskan informasi hanya pada elemen-elemen yang diperlukan dalam proses sistem rekomendasi berbasis konten.
+Ditahapan ini, dilakukan pemangkasan elemen pada kolom Synopsis dan Producers menggunakan fungsi apply() dengan lambda. Kolom Synopsis dipangkas menjadi hanya 3 kata pertama, sementara Producers hanya mengambil dua produser pertama. Tujuan dari langkah ini adalah untuk menyederhanakan representasi data dengan mengurangi panjang teks yang mungkin terlalu kompleks atau beragam. Pemangkasan ini membantu mengurangi noise, mempercepat proses komputasi, dan menjaga fokus pada informasi yang paling awal atau paling relevan. 
 
+### 7. Pembersihan Karakter Khusus dan Penggabungan Kata
+
+![image](img/Membersihkan_kolom.png)
+
+Pada langkah ini, dilakukan pembersihan data dengan menghapus karakter tanda baca seperti koma (,) dan mengganti spasi ( ) dengan tanpa spasi ('') pada beberapa kolom seperti Synopsis, Type, Status, Premiered, Studios, Genres, Rating, dan Producers. Tujuan utama dari langkah ini adalah untuk menyiapkan data dalam format yang bersih dan seragam, terutama sebelum dilakukan ekstraksi fitur berbasis teks seperti TF-IDF. Penghapusan tanda baca membantu mengurangi noise dalam teks, sedangkan penggabungan kata bertujuan agar istilah yang terdiri dari dua kata atau lebih tetap terbaca sebagai satu entitas
+
+### 8. Penggabungan Informasi Fitur ke dalam Kolom ‘About’
+
+![image](img/Concatinating_about.png)
+
+Pada tahap ini, dilakukan penggabungan beberapa kolom informasi seperti Synopsis, Genres, Premiered, Producers, Status, Studios, Type, Episodes, Score, Demographics, dan Rating ke dalam satu kolom baru bernama About. Tujuan dari langkah ini adalah untuk menyatukan semua informasi penting tentang suatu anime ke dalam satu representasi teks utuh yang bisa digunakan sebagai masukan bagi model berbasis teks, seperti TF-IDF atau sistem rekomendasi berbasis konten. Dengan menyatukan berbagai atribut dalam satu kolom, proses ekstraksi fitur menjadi lebih efisien karena seluruh karakteristik yang menggambarkan sebuah anime tersedia dalam satu entitas teks, sehingga memperkuat konteks dan kualitas hasil rekomendasi.
+
+### 9. Penghapusan Kolom Redundan Setelah Penggabungan
+
+![image](img/Hapus_Kolom.png)
+
+Gambar diatas menjelaskan kolom-kolom awal seperti Synopsis, Type, Status, Premiered, Producers, Studios, Genres, Demographics, Rating, Episodes, dan Score dihapus dari DataFrame. Langkah ini dilakukan karena informasi dari kolom-kolom tersebut telah digabungkan ke dalam satu kolom baru yaitu About. Dengan menghapus kolom-kolom asli yang sudah tidak diperlukan, dataset menjadi lebih ringkas dan meminimalkan redundansi, sehingga lebih efisien untuk diproses oleh algoritma selanjutnya seperti vektorisasi teks atau pemodelan sistem rekomendasi.
+
+### 10. Penggantian Nama Kolom untuk Kejelasan
+
+![image](img/Rename_english.png)
+
+Di langkah ini, nama kolom English diubah menjadi Title. Penggantian ini dilakukan untuk meningkatkan kejelasan dan konsistensi penamaan kolom dalam dataset. Kolom English kemungkinan menyimpan judul anime dalam bahasa Inggris, sehingga menggantinya menjadi Title membuatnya lebih deskriptif dan mudah dipahami, terutama saat digunakan dalam proses analisis, visualisasi, atau pengembangan sistem rekomendasi berbasis konten.
+
+### 11. Penggabungan Daftar Kata menjadi Kalimat Utuh
+
+![image](img/ListToTring.png)
+
+Pada tahap ini, dilakukan penggabungan elemen-elemen dalam kolom About yang sebelumnya berupa list (daftar kata) menjadi sebuah string tunggal yang dipisahkan oleh spasi. Hal ini dilakukan menggunakan fungsi join(). Langkah ini penting karena algoritma seperti TF-IDF memerlukan input berupa teks dalam format string, bukan list. Dengan menggabungkan daftar kata menjadi satu teks utuh, data siap digunakan untuk ekstraksi fitur berbasis teks, seperti pembuatan vektor representasi untuk sistem rekomendasi.
 
 ## Modeling
 
-Tahapan ini merupakan inti dari pembangunan sistem rekomendasi berbasis konten (content-based filtering), yang bertujuan untuk menyarankan anime berdasarkan kemiripan konten, khususnya dari sisi genre. Model yang digunakan dalam proyek ini adalah Content-Based Recommendation dengan pendekatan Text Feature Extraction menggunakan TF-IDF (Term Frequency–Inverse Document Frequency). Teknik ini mengekstraksi bobot dari kata-kata yang muncul pada kolom anime_genre, untuk mengukur seberapa penting sebuah genre bagi sebuah anime dibandingkan dengan seluruh anime lainnya dalam dataset.
-
+Tahapan ini merupakan inti dari pembangunan sistem rekomendasi berbasis konten (content-based filtering), yang berfokus pada pencarian kemiripan antar anime berdasarkan informasi deskriptifnya. Dalam tahap ini, berbagai kolom seperti synopsis, genres, type, studios, status, score, dan lainnya digabung menjadi satu kolom teks bernama About. Kolom ini kemudian diproses agar berbentuk string utuh, sehingga siap digunakan sebagai input dalam teknik ekstraksi fitur teks seperti TF-IDF (Term Frequency–Inverse Document Frequency). TF-IDF akan menghitung bobot pentingnya kata-kata dalam teks tersebut, sehingga memungkinkan sistem rekomendasi untuk menemukan anime yang memiliki kemiripan konten berdasarkan informasi yang telah digabungkan tersebu
 Langkah-langkah utama dalam proses modeling adalah sebagai berikut:
 
-### 1. Inisialisasi TF-IDF Vectorizer
-TfidfVectorizer digunakan untuk mengubah data anime_genre menjadi vektor numerik berdasarkan frekuensi kemunculan genre dalam setiap entri anime. Parameter token_pattern=r"(?u)\b[\w\-]+\b" digunakan untuk mempertahankan genre yang mengandung tanda hubung atau spasi yang telah diubah sebelumnya menjadi underscore (contoh: "slice_of_life").
+### 1. Inisialisasi dan Transformasi TF-IDF
+TfidfVectorizer digunakan untuk mengubah data teks pada kolom About menjadi representasi vektor numerik berdasarkan pentingnya kata. Parameter max_features=5000 membatasi jumlah fitur, dan stop_words='english' menghapus kata umum yang tidak memiliki makna penting. Vektor ini akan digunakan untuk mengukur kemiripan antar anime.
 
-### 2. Pembuatan TF-IDF Matrix
-Data anime_genre diubah menjadi matriks TF-IDF, di mana setiap baris merepresentasikan sebuah anime, dan setiap kolom merepresentasikan sebuah genre. Nilai dalam matriks menunjukkan bobot genre tersebut pada masing-masing anime.
-
-### 3. Perhitungan Cosine Similarity
-Matriks kesamaan dihitung menggunakan cosine similarity terhadap TF-IDF matrix. Cosine similarity mengukur sejauh mana dua anime memiliki kemiripan berdasarkan distribusi bobot genre mereka.
-
-### 4. Pembuatan DataFrame Cosine Similarity
-Hasil dari cosine similarity disimpan dalam sebuah DataFrame cosine_sim_df, dengan baris dan kolom berisi judul anime. Setiap nilai menunjukkan tingkat kesamaan antara dua anime berdasarkan kontennya.
+### 2. Perhitungan Cosine Similarity
+cosine_similarity digunakan untuk menghitung tingkat kemiripan antar anime berdasarkan vektor TF-IDF dari kolom About. Hasilnya adalah matriks kemiripan yang menunjukkan seberapa mirip satu anime dengan anime lainnya berdasarkan kontennya.
 
 ### Output Top-N 
 
-Berikut merupakan output Top-10 hasil rekomendasi untuk anime 'Cowboy Bebop' :
+Berikut merupakan output Top-10 hasil rekomendasi untuk anime 'Naruto' :
 
-![image](https://github.com/user-attachments/assets/c241d9e3-b5f5-4d9d-80f6-05e08e0e73c4)
+![image](img/Ouput_Naruto)
 
 
 ## Evaluation
@@ -167,22 +178,29 @@ Untuk mengevaluasi performa sistem rekomendasi berbasis konten ini, digunakan me
 
 ![image](https://github.com/user-attachments/assets/ff2bb892-912b-431b-9c29-5688c87bb393)
 
-Pada anime 'Cowboy Bebop' sebagai input, sistem menghasilkan 10 rekomendasi teratas berdasarkan kemiripan genre. Dari 10 rekomendasi tersebut, sebanyak 10 memiliki genre yang sama dengan Cowboy Bebop, yaitu Action. Maka nilai precision-nya adalah:
+Pada anime 'Naruto sebagai input, sistem menghasilkan 10 rekomendasi teratas berdasarkan kemiripan atribut yang sudah disebutkan di problem statement. Dari 10 rekomendasi tersebut, sebanyak 10 memiliki atribut yang sama dengan Naruto. Maka nilai precision-nya adalah:
 
 ![image](https://github.com/user-attachments/assets/c4e82865-0dae-45f5-af20-96f67b9ef174)
+![image](img/Precision.png)
 
-![image](https://github.com/user-attachments/assets/74223a48-bcd1-4706-9653-6667cbf3d10a)
+Selain itu juga dilakukan visualisasi menggunakan histogram untuk skor ksamaan antar anime dengan input Naruto
+![image](img/Distribusi.png)
+![image](img/Distribusi2.png)
+
+Visualisasi histogram distribusi cosine similarity yang ditampilkan menunjukkan bahwa sebagian besar anime dalam dataset memiliki tingkat kemiripan yang rendah terhadap anime yang dijadikan input, dalam hal ini Naruto. Sebaliknya, hanya sebagian kecil anime yang memiliki skor kemiripan tinggi. Hal ini menunjukkan bahwa model content-based filtering yang dibangun mampu membedakan dengan akurat mana anime yang benar-benar serupa dan mana yang tidak, berdasarkan informasi konten seperti sinopsis, genre, musim tayang, studio produksi, dan elemen deskriptif lainnya yang telah diekstraksi menggunakan teknik TF-IDF.
+
+Distribusi cosine similarity ini menjadi bukti bahwa model telah bekerja sesuai dengan prinsip dasar content-based filtering, yaitu merekomendasikan item yang memiliki kemiripan tinggi secara konten. Ini sangat selaras dengan kebutuhan pengguna yang ingin menemukan anime baru yang sejalan dengan preferensi mereka, tanpa harus mencari secara manual atau mengandalkan data interaksi
 
 ### Keterkaitan Evaluasi Model dengan Business Understanding
 
 #### Problem Statement
 Model sistem rekomendasi berbasis content-based filtering yang dibangun telah berhasil menjawab seluruh pernyataan masalah yang telah dirumuskan:
-- Model mampu menyarankan judul anime berdasarkan kemiripan genre dari anime yang diberikan. Hal ini memudahkan pengguna dalam menemukan tontonan baru tanpa harus melakukan pencarian manual, menjawab permasalahan kesulitan dalam eksplorasi konten.
-- Karena pendekatan yang digunakan tidak memerlukan data interaksi pengguna, sistem tetap dapat berfungsi optimal meskipun pengguna belum memiliki riwayat rating atau aktivitas menonton. Ini menjawab kebutuhan akan sistem rekomendasi yang inklusif bagi pengguna baru.
-- Evaluasi menggunakan metrik precision menunjukkan bahwa sebagian besar rekomendasi yang diberikan relevan dengan genre anime input. Nilai precision mencapai angka tinggi yakni 1.0 yang menunjukkan bahwa sistem sudah mampu untuk mengidentifikasi kesamaan genre secara fungsional.
+- Model mampu memberikan rekomendasi anime yang mirip berdasarkan gabungan atribut konten yang luas, tidak hanya terbatas pada genre saja, namun juga termasuk sinopsis, status, studio, jumlah episode, dan lainnya, yang sebelumnya kurang dimanfaatkan secara optimal.
+- Sistem tidak bergantung pada riwayat pengguna atau rating, sehingga tetap dapat memberikan hasil yang relevan bagi pengguna baru tanpa jejak interaksi sebelumnya.
+- Masalah kesulitan dalam menemukan tontonan yang relevan dari jumlah pilihan yang sangat banyak berhasil dijawab melalui sistem yang menyaring secara cerdas berdasarkan kemiripan konten.
 
 #### Goals
 Dengan demikian, seluruh tujuan dari tahap Business Understanding dapat dikatakan tercapai:
-- Sistem rekomendasi berhasil dibangun dan mampu memberikan saran anime berdasarkan genre.
-- Pendekatan content-based filtering telah berhasil diterapkan dan berjalan baik tanpa memerlukan data riwayat pengguna.
-- Pengguna dapat dengan lebih mudah menemukan judul-judul anime yang relevan dengan preferensi mereka secara otomatis, sehingga pengalaman eksplorasi konten menjadi lebih efisien dan personal.
+- Sistem rekomendasi berbasis content-based filtering berhasil dibangun dan berfungsi secara efektif.
+- Rekomendasi yang dihasilkan sudah memperhitungkan atribut konten secara menyeluruh, menjawab kebutuhan pengguna untuk menemukan anime yang sesuai tanpa harus bergantung pada data aktivitas sebelumnya.
+- Teknik NLP seperti TF-IDF serta cosine similarity mampu mengekstraksi dan membandingkan konten dengan baik, menghasilkan pengalaman eksplorasi anime yang lebih personal, otomatis, dan efisien bagi pengguna.
