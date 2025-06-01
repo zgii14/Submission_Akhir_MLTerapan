@@ -195,9 +195,9 @@ Distribusi cosine similarity ini menjadi bukti bahwa model telah bekerja sesuai 
 
 #### Problem Statement
 Model sistem rekomendasi berbasis content-based filtering yang dibangun telah berhasil menjawab seluruh pernyataan masalah yang telah dirumuskan:
-- Model mampu memberikan rekomendasi anime yang mirip berdasarkan gabungan atribut konten yang luas, tidak hanya terbatas pada genre saja, namun juga termasuk sinopsis, status, studio, jumlah episode, dan lainnya, yang sebelumnya kurang dimanfaatkan secara optimal.
-- Sistem tidak bergantung pada riwayat pengguna atau rating, sehingga tetap dapat memberikan hasil yang relevan bagi pengguna baru tanpa jejak interaksi sebelumnya.
 - Masalah kesulitan dalam menemukan tontonan yang relevan dari jumlah pilihan yang sangat banyak berhasil dijawab melalui sistem yang menyaring secara cerdas berdasarkan kemiripan konten.
+- Model mampu memberikan rekomendasi anime yang mirip berdasarkan gabungan atribut konten yang luas, tidak hanya terbatas pada genre saja, namun juga termasuk sinopsis, status, studio, jumlah episode, dan lainnya, yang sebelumnya kurang dimanfaatkan secara optimal.
+- informasi deskriptif sudah digunakan dalam model dan bekerja dengan baik untuk membantu pengguna dalam pencarian anime yang relevan
 
 #### Goals
 Dengan demikian, seluruh tujuan dari tahap Business Understanding dapat dikatakan tercapai:
