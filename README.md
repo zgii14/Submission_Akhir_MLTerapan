@@ -28,7 +28,7 @@ Lebih lanjut, Putri dan Faisal (2023) membandingkan efektivitas content-based fi
 
 ### 🎯 Goals
 1. Membangun sistem rekomendasi berbasis konten (content-based filtering) yang dapat memberikan saran anime serupa berdasarkan atribut kontennya.
-2. Menyediakan 10 rekomendasi anime yang paling mirip berdasarkan anime yang dipilih oleh pengguna.
+2. Menyediakan rekomendasi anime yang paling mirip berdasarkan anime yang dipilih oleh pengguna.
 3. Menggunakan teknik NLP seperti TF-IDF dan cosine similarity untuk mengekstraksi dan menghitung kemiripan antar anime secara efisien.
 
 
@@ -68,9 +68,7 @@ Variabel-variabel utama yang terdapat dalam dataset Anime.csv adalah sebagai ber
 - **Favorites**: Jumlah pengguna yang memfavoritkan.
 
 
-Variabel-variabel ini akan digunakan sebagai dasar dalam membangun sistem rekomendasi berbasis konten dengan fokus utama pada fitur genre.
-
-![image](https://github.com/user-attachments/assets/bae638a3-ac1f-4b67-b66c-1b9fe2765b8f)
+![image]()
 
 DataFrame yang ditampilkan memiliki 19.311 entri dengan indeks dari 8 hingga 19.318 dan terdiri dari 11 kolom, yaitu id, title, synopsis, genre, aired, episodes, members, popularity, ranked, score, img_url, dan link. Semua kolom memiliki data non-null sebanyak 19.311, kecuali synopsis (18.336), episodes (18.605), ranked (16.099), dan score (18.732). yang menunjukkan adanya missing values yakni: 
 - uid : 0
