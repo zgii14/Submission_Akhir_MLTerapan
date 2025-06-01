@@ -151,7 +151,7 @@ Di langkah ini, nama kolom English diubah menjadi Title. Penggantian ini dilakuk
 
 ### 11. Penggabungan Daftar Kata menjadi Kalimat Utuh
 
-![image](img/ListToTring.png)
+![image](img/ListToString.png)
 
 Pada tahap ini, dilakukan penggabungan elemen-elemen dalam kolom About yang sebelumnya berupa list (daftar kata) menjadi sebuah string tunggal yang dipisahkan oleh spasi. Hal ini dilakukan menggunakan fungsi join(). Langkah ini penting karena algoritma seperti TF-IDF memerlukan input berupa teks dalam format string, bukan list. Dengan menggabungkan daftar kata menjadi satu teks utuh, data siap digunakan untuk ekstraksi fitur berbasis teks, seperti pembuatan vektor representasi untuk sistem rekomendasi.
 
@@ -170,7 +170,7 @@ cosine_similarity digunakan untuk menghitung tingkat kemiripan antar anime berda
 
 Berikut merupakan output Top-10 hasil rekomendasi untuk anime 'Naruto' :
 
-![image](img/Ouput_Naruto)
+![image](img/Naruto.png)
 
 
 ## Evaluation
@@ -181,7 +181,7 @@ Untuk mengevaluasi performa sistem rekomendasi berbasis konten ini, digunakan me
 Pada anime 'Naruto sebagai input, sistem menghasilkan 10 rekomendasi teratas berdasarkan kemiripan atribut yang sudah disebutkan di problem statement. Dari 10 rekomendasi tersebut, sebanyak 10 memiliki atribut yang sama dengan Naruto. Maka nilai precision-nya adalah:
 
 ![image](https://github.com/user-attachments/assets/c4e82865-0dae-45f5-af20-96f67b9ef174)
-![image](img/Precision.png)
+<br> ![image](img/Precision.png)
 
 Selain itu juga dilakukan visualisasi menggunakan histogram untuk skor ksamaan antar anime dengan input Naruto
 ![image](img/Distribusi.png)
