@@ -155,18 +155,22 @@ Di langkah ini, nama kolom English diubah menjadi Title. Penggantian ini dilakuk
 
 Pada tahap ini, dilakukan penggabungan elemen-elemen dalam kolom About yang sebelumnya berupa list (daftar kata) menjadi sebuah string tunggal yang dipisahkan oleh spasi. Hal ini dilakukan menggunakan fungsi join(). Langkah ini penting karena algoritma seperti TF-IDF memerlukan input berupa teks dalam format string, bukan list. Dengan menggabungkan daftar kata menjadi satu teks utuh, data siap digunakan untuk ekstraksi fitur berbasis teks, seperti pembuatan vektor representasi untuk sistem rekomendasi.
 
-## Modeling
 
-Tahapan ini merupakan inti dari pembangunan sistem rekomendasi berbasis konten (content-based filtering), yang berfokus pada pencarian kemiripan antar anime berdasarkan informasi deskriptifnya. Dalam tahap ini, berbagai kolom seperti synopsis, genres, type, studios, status, score, dan lainnya digabung menjadi satu kolom teks bernama About. Kolom ini kemudian diproses agar berbentuk string utuh, sehingga siap digunakan sebagai input dalam teknik ekstraksi fitur teks seperti TF-IDF (Term Frequency–Inverse Document Frequency). TF-IDF akan menghitung bobot pentingnya kata-kata dalam teks tersebut, sehingga memungkinkan sistem rekomendasi untuk menemukan anime yang memiliki kemiripan konten berdasarkan informasi yang telah digabungkan tersebu
-Langkah-langkah utama dalam proses modeling adalah sebagai berikut:
-
-### 1. Inisialisasi dan Transformasi TF-IDF
+### 12. Inisialisasi dan Transformasi TF-IDF
 TfidfVectorizer digunakan untuk mengubah data teks pada kolom About menjadi representasi vektor numerik berdasarkan pentingnya kata. Parameter max_features=5000 membatasi jumlah fitur, dan stop_words='english' menghapus kata umum yang tidak memiliki makna penting. Vektor ini akan digunakan untuk mengukur kemiripan antar anime.
 
-### 2. Perhitungan Cosine Similarity
-cosine_similarity digunakan untuk menghitung tingkat kemiripan antar anime berdasarkan vektor TF-IDF dari kolom About. Hasilnya adalah matriks kemiripan yang menunjukkan seberapa mirip satu anime dengan anime lainnya berdasarkan kontennya.
+## Modeling
 
-### Output Top-N 
+Tahapan ini merupakan inti dari pembangunan sistem rekomendasi berbasis konten (content-based filtering), yang berfokus pada pencarian kemiripan antar anime berdasarkan informasi deskriptifnya. Dalam tahap ini, berbagai kolom seperti synopsis, genres, type, studios, status, score, dan lainnya digabung menjadi satu kolom teks bernama About. Kolom ini kemudian diproses agar berbentuk string utuh, sehingga siap digunakan sebagai input dalam teknik ekstraksi fitur teks seperti TF-IDF (Term Frequency–Inverse Document Frequency). TF-IDF akan menghitung bobot pentingnya kata-kata dalam teks tersebut lalu cosine similarity akan dihitung sehingga memungkinkan sistem rekomendasi untuk menemukan anime yang memiliki kemiripan konten berdasarkan informasi yang telah digabungkan tersebut
+Langkah-langkah utama dalam proses modeling adalah sebagai berikut:
+
+
+### 1. Perhitungan Cosine Similarity
+Untuk menghitung kemiripan antar anime, pada data preparation sebelumnya digunakan metode TF-IDF Vectorization pada kolom teks About, yaitu gabungan dari beberapa informasi deskriptif. TF-IDF (Term Frequency–Inverse Document Frequency) mengubah teks menjadi vektor numerik yang mewakili pentingnya kata-kata tertentu dalam setiap anime dibandingkan seluruh koleksi.
+
+Setelah vektor TF-IDF diperoleh, digunakan Cosine Similarity untuk mengukur tingkat kemiripan antar dua anime. Cosine Similarity menghitung sudut antara dua vektor dalam ruang multidimensi, dengan nilai berkisar antara 0 (tidak mirip) hingga 1 (sangat mirip). Hasil dari proses ini adalah sebuah matriks kemiripan, di mana setiap elemen menunjukkan tingkat kemiripan antara sepasang anime.
+
+### 2 Output Top-N 
 
 Berikut merupakan output Top-10 hasil rekomendasi untuk anime 'Naruto' :
 
